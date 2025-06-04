@@ -126,8 +126,8 @@ The main method demonstrates:
 
 ## 👨‍💻 Author
 
-Made with ❤️ for the hackathon by [Your Name]
-GitHub: [github.com/YourUsername](https://github.com/GautamBytes)
-LinkedIn: [linkedin.com/in/YourUsername](https://www.linkedin.com/in/gautam-manchandani/)
+Made with ❤️ for the hackathon by Gautam Manchandani
+GitHub: [GautamBytes](https://github.com/GautamBytes)
+LinkedIn: [Gautam Manchandani](https://www.linkedin.com/in/gautam-manchandani/)
 
 ---
