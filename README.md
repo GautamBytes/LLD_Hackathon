@@ -1,42 +1,133 @@
-# Rideshare System - Design Explanation
+# 🚖 Rideshare System - LLD Hackathon Submission
 
-## SOLID Principles Implementation
+This project is a Low-Level Design (LLD) implementation of a simplified ride-sharing platform (like Uber/Ola) developed as part of a hackathon challenge. It showcases the use of **SOLID principles**, **design patterns**, and **extensible architecture**.
 
-**Single Responsibility Principle (SRP):** Each class has one focus (e.g., Rider holds rider info, RideService manages rides, MatchingStrategy handles matching).
+---
 
-**Open/Closed Principle (OCP):** We can add new ride types, strategies, or fare decorators without modifying existing code (just extend interfaces). For example, adding a new LuxuryRideType or new matching strategy does not change core logic.
+## ✅ SOLID Principles Implementation
 
-**Liskov Substitution Principle (LSP):** Subclasses (Rider, Driver) can be used wherever User is expected. Strategy implementations are interchangeable via the MatchingStrategy interface.
+### **S — Single Responsibility Principle**
+- Each class handles one responsibility only.
+  - `Rider`, `Driver`: store user-related data.
+  - `RideService`: manages ride flow.
+  - `MatchingStrategy`: selects appropriate driver.
 
-**Interface Segregation Principle (ISP):** Interfaces are specific (e.g., Observer only has update(), MatchingStrategy only has findDriver(), so classes only implement what they need).
+### **O — Open/Closed Principle**
+- The system is open for extension, closed for modification.
+  - New ride types, pricing rules, or matching strategies can be added without touching existing logic.
 
-**Dependency Inversion Principle (DIP):** High-level modules (e.g., RideService) depend on abstractions (MatchingStrategy, FareCalculator) rather than concrete classes.
+### **L — Liskov Substitution Principle**
+- Subtypes (`Rider`, `Driver`) can be used wherever `User` is expected.
+- Strategy classes are interchangeable via the `MatchingStrategy` interface.
 
-## Design Patterns Used
+### **I — Interface Segregation Principle**
+- Interfaces are fine-grained:
+  - `Observer` only contains `update()`
+  - `MatchingStrategy` only defines `findDriver()`
 
-- **Singleton:** RideService is a singleton managing registrations and ride flows.
-- **Factory:** MatchingStrategyFactory returns a strategy by name; we could similarly use a factory to create rides or users.
-- **Strategy:** MatchingStrategy interface allows selecting different driver-matching algorithms (NearestDriverStrategy, HighestRatedDriverStrategy).
-- **Observer:** Ride implements Subject and notifies Observer listeners (Rider, Driver) when status changes (e.g., from REQUESTED to COMPLETED).
-- **Decorator:** FareCalculator is decorated by SurgePricingDecorator or DiscountDecorator to modify the base fare calculation (e.g., apply a multiplier or subtract a discount).
+### **D — Dependency Inversion Principle**
+- `RideService` depends on abstractions like `FareCalculator` and `MatchingStrategy`, not concrete classes.
 
-## Simplifications & Assumptions
+---
 
-- In-memory lists store all users and rides (no database).
-- Single-threaded simulation with no concurrency or real-time constraints.
-- Locations use simple Euclidean distance.
-- We assume immediate driver acceptance (no cancellations or retries).
-- Vehicle types and other attributes are simplified (one RideType per driver).
+## 💡 Design Patterns Used
 
-## Running the Simulation
+| Pattern      | Where It's Used                                              |
+|--------------|--------------------------------------------------------------|
+| **Singleton**| `RideService` manages all state (drivers, riders, rides)     |
+| **Strategy** | Different matching strategies (nearest, highest-rated)       |
+| **Observer** | `Ride` notifies `Rider` and `Driver` on status changes       |
+| **Decorator**| Flexible fare computation with surge/discount layers         |
+| **Factory**  | `MatchingStrategyFactory` provides matching algorithm        |
 
-1. **Compile** all .java files under the com.rideshare package structure (no external libraries needed).
+---
 
-2. **Run** `RideService.main()`. The program will simulate: 
-   - Registering users/drivers
-   - Handling two ride requests (one with nearest-driver strategy and surge pricing, one with highest-rated-driver strategy and discount)
-   - Print status updates and fares
+## ⚙️ Features Implemented
 
-3. **Observe** console output to trace the flow (driver matching, status updates, and final fare calculation with decorators applied).
+- Rider and Driver registration
+- Ride booking based on:
+  - Ride type (Sedan, SUV, Bike, Autorickshaw)
+  - Ride mode: `NORMAL` or `CARPOOL`
+  - Matching strategy: `Nearest` or `HighestRated`
+- Fare calculation with:
+  - Base fare
+  - Optional Surge pricing
+  - Optional Discount
+- Status lifecycle:
+  - `REQUESTED → ACCEPTED → EN_ROUTE → IN_PROGRESS → COMPLETED`
+- Notifications sent via Observer pattern
+- In-memory storage and single-threaded simulation
+- Console output for full trace of actions
 
-This solution closely follows the requirements, demonstrating the happy-path flows and the specified design patterns.
+---
+
+## 🛠️ Assumptions & Simplifications
+
+- All data is stored in-memory (no database).
+- Locations are represented with simple 2D coordinates.
+- Carpool is simulated: only drivers with `capacity >= 2` are matched, but actual pooling of riders is not implemented.
+- Drivers always accept rides (no rejection logic).
+- One ride per rider at a time.
+- No concurrency or threading; single-threaded sequential flow.
+
+---
+
+## 🚀 How to Run
+
+### 1. Clone the Repo
+```bash
+git clone https://github.com/GautamBytes/LLD_Hackathon.git
+```
+
+### 2. Compile the Code
+
+```bash
+javac com\rideshare\observer\*.java com\rideshare\model\*.java com\rideshare\strategy\*.java com\rideshare\decorator\*.java com\rideshare\service\*.java
+```
+
+### 3. Run the Main Program
+
+```bash
+java com.rideshare.service.RideService
+```
+
+---
+
+## 🧪 Sample Simulation Flow
+
+The main method demonstrates:
+
+1. **Registration**
+   * Registers 3 drivers and 3 riders
+
+2. **Ride Requests**
+   * Alice → Sedan (Nearest strategy + Surge pricing)
+   * Bob → SUV (Highest-rated strategy + Discount)
+   * Charlie → Autorickshaw (Basic ride)
+
+3. **Fare Calculation**
+   * Decorators applied based on ride request
+
+4. **Status Notifications**
+   * Sent to Rider and Driver at each stage
+
+---
+
+## 📌 Extensibility Ideas
+
+* Add cancellation flow or driver rejection
+* Integrate real maps (Google Maps APIs)
+* Group riders into one car for real carpool logic
+* Add support for scheduling future rides
+* Persist rides and users to a database
+* Extend fare calculator to support promo codes or time-based surge
+
+---
+
+## 👨‍💻 Author
+
+Made with ❤️ for the hackathon by [Your Name]
+GitHub: [github.com/YourUsername](https://github.com/GautamBytes)
+LinkedIn: [linkedin.com/in/YourUsername](https://www.linkedin.com/in/gautam-manchandani/)
+
+---
